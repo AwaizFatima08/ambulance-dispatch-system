@@ -1,21 +1,21 @@
 class Dispatch {
-
-  String id;
-  String patientName;
-  String houseNumber;
-  String condition;
-  String dispatchType;
-  String ambulanceId;
+  final String id;
+  final String employeeNumber;
+  final String patientName;
+  final String houseNumber;
+  final String condition;
+  final String ambulance;
+  final String notes;
   String status;
 
   Dispatch({
     required this.id,
+    required this.employeeNumber,
     required this.patientName,
     required this.houseNumber,
     required this.condition,
-    required this.dispatchType,
-    required this.ambulanceId,
-    required this.status,
+    required this.ambulance,
+    required this.notes,
+    this.status = "Pending",
   });
-
 }

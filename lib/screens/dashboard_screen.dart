@@ -1,112 +1,145 @@
 import 'package:flutter/material.dart';
+import '../services/dispatch_service.dart';
+import '../models/dispatch.dart';
 import 'create_dispatch_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({super.key});
+
   @override
-  _DashboardScreenState createState() => _DashboardScreenState();
+  State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
 
-  List<Map<String, String>> dispatches = [
-    {
-      "id": "D001",
-      "patient": "Ali Raza",
-      "house": "B17",
-      "status": "Enroute"
-    },
-    {
-      "id": "D002",
-      "patient": "Ahmed Khan",
-      "house": "C12",
-      "status": "Pickup"
-    },
-  ];
+  final DispatchService dispatchService = DispatchService();
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Ambulance Dispatch Dashboard"),
+        title: const Text("Ambulance Dispatch Dashboard"),
       ),
 
       body: Column(
         children: [
 
-          // Ambulance Status Section
-          Padding(
-            padding: EdgeInsets.all(8),
-            child: Card(
-              child: ListTile(
-                title: Text("Ambulance 1"),
-                trailing: Text(
-                  "Available",
-                  style: TextStyle(color: Colors.green),
-                ),
-              ),
+          const SizedBox(height: 10),
+
+          const Text(
+            "Active Dispatches",
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
             ),
           ),
 
-          Padding(
-            padding: EdgeInsets.all(8),
-            child: Card(
-              child: ListTile(
-                title: Text("Ambulance 2"),
-                trailing: Text(
-                  "Busy",
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
-            ),
-          ),
-
-          Divider(),
-
-          Padding(
-            padding: EdgeInsets.all(8),
-            child: Text(
-              "Active Dispatches",
-              style: TextStyle(fontSize: 20),
-            ),
-          ),
+          const SizedBox(height: 10),
 
           Expanded(
-            child: ListView.builder(
-              itemCount: dispatches.length,
-              itemBuilder: (context, index) {
+            child: dispatchService.dispatches.isEmpty
+                ? const Center(
+                    child: Text(
+                      "No active dispatches",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  )
 
-                final d = dispatches[index];
+                : ListView.builder(
+                    itemCount: dispatchService.dispatches.length,
+                    itemBuilder: (context, index) {
 
-                return Card(
-                  child: ListTile(
-                    title: Text("${d['patient']} (House ${d['house']})"),
-                    subtitle: Text("Dispatch ID: ${d['id']}"),
-                    trailing: Text(d['status']!),
+                      Dispatch dispatch =
+                          dispatchService.dispatches[index];
+
+                      return Card(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+
+                          child: Column(
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
+
+                            children: [
+
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+
+                                children: [
+
+                                  Text(
+                                    dispatch.patientName,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+
+                                  Text(
+                                    dispatch.status,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 8),
+
+                              Text(
+                                "House: ${dispatch.houseNumber}",
+                                style:
+                                    const TextStyle(fontSize: 16),
+                              ),
+
+                              Text(
+                                "Condition: ${dispatch.condition}",
+                                style:
+                                    const TextStyle(fontSize: 16),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                );
-
-              },
-            ),
           ),
 
+          const SizedBox(height: 10),
+
           Padding(
-            padding: EdgeInsets.all(10),
-            child: ElevatedButton(
-              onPressed: () {
+            padding: const EdgeInsets.all(12),
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CreateDispatchScreen(),
-                  ),
-                );
+            child: SizedBox(
+              width: double.infinity,
+              height: 50,
 
-              },
-              child: Text("NEW DISPATCH"),
+              child: ElevatedButton(
+                onPressed: () async {
+
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const CreateDispatchScreen(),
+                    ),
+                  );
+
+                  setState(() {});
+                },
+
+                child: const Text(
+                  "NEW DISPATCH",
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
             ),
-          )
-
+          ),
         ],
       ),
     );

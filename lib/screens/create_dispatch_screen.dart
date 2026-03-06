@@ -1,90 +1,88 @@
 import 'package:flutter/material.dart';
+import '../models/dispatch.dart';
+import '../services/dispatch_service.dart';
 
 class CreateDispatchScreen extends StatefulWidget {
+  const CreateDispatchScreen({super.key});
+
   @override
-  _CreateDispatchScreenState createState() => _CreateDispatchScreenState();
+  State<CreateDispatchScreen> createState() => _CreateDispatchScreenState();
 }
 
 class _CreateDispatchScreenState extends State<CreateDispatchScreen> {
 
-  final employeeController = TextEditingController();
-  final patientController = TextEditingController();
-  final houseController = TextEditingController();
-  final conditionController = TextEditingController();
-  final notesController = TextEditingController();
+  final TextEditingController employeeNumberController = TextEditingController();
+  final TextEditingController patientNameController = TextEditingController();
+  final TextEditingController houseNumberController = TextEditingController();
+  final TextEditingController conditionController = TextEditingController();
+  final TextEditingController ambulanceController = TextEditingController();
+  final TextEditingController notesController = TextEditingController();
 
-  String ambulance = "Ambulance 1";
+  final DispatchService dispatchService = DispatchService();
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
-        title: Text("Create Dispatch"),
+        title: const Text("Create Dispatch"),
       ),
-
       body: Padding(
-        padding: EdgeInsets.all(16),
-
+        padding: const EdgeInsets.all(16),
         child: ListView(
           children: [
 
             TextField(
-              controller: employeeController,
-              decoration: InputDecoration(labelText: "Employee Number"),
+              controller: employeeNumberController,
+              decoration: const InputDecoration(labelText: "Employee Number"),
             ),
 
             TextField(
-              controller: patientController,
-              decoration: InputDecoration(labelText: "Patient Name"),
+              controller: patientNameController,
+              decoration: const InputDecoration(labelText: "Patient Name"),
             ),
 
             TextField(
-              controller: houseController,
-              decoration: InputDecoration(labelText: "House Number"),
+              controller: houseNumberController,
+              decoration: const InputDecoration(labelText: "House Number"),
             ),
 
             TextField(
               controller: conditionController,
-              decoration: InputDecoration(labelText: "Condition"),
+              decoration: const InputDecoration(labelText: "Condition"),
             ),
 
-            DropdownButtonFormField(
-              value: ambulance,
-              items: [
-                DropdownMenuItem(
-                  value: "Ambulance 1",
-                  child: Text("Ambulance 1"),
-                ),
-                DropdownMenuItem(
-                  value: "Ambulance 2",
-                  child: Text("Ambulance 2"),
-                ),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  ambulance = value!;
-                });
-              },
-              decoration: InputDecoration(labelText: "Assign Ambulance"),
+            TextField(
+              controller: ambulanceController,
+              decoration: const InputDecoration(labelText: "Assign Ambulance"),
             ),
 
             TextField(
               controller: notesController,
-              decoration: InputDecoration(labelText: "Notes"),
+              decoration: const InputDecoration(labelText: "Notes"),
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             ElevatedButton(
               onPressed: () {
 
+                Dispatch newDispatch = Dispatch(
+                  id: DateTime.now().millisecondsSinceEpoch.toString(),
+                  employeeNumber: employeeNumberController.text,
+                  patientName: patientNameController.text,
+                  houseNumber: houseNumberController.text,
+                  condition: conditionController.text,
+                  ambulance: ambulanceController.text,
+                  notes: notesController.text,
+                );
+
+                dispatchService.addDispatch(newDispatch);
+
                 Navigator.pop(context);
-
               },
-              child: Text("CREATE DISPATCH"),
-            )
 
+              child: const Text("CREATE DISPATCH"),
+            ),
           ],
         ),
       ),
